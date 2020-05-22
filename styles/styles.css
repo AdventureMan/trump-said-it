@@ -16,6 +16,7 @@ a:hover {
     width: 100vw;
     height: 100vh;
     background-color: #f575c4;
+    /* background-color: #ffffff; Messing around with no colors */
     display: flex;
     flex-flow: column nowrap;
     justify-content: space-between;
@@ -23,6 +24,7 @@ a:hover {
 
 .yes-he-actually-said-this {
     color: white;
+    /* color: black; Messing around with no colors  */
     font-family: 'Josefin Sans', sans-serif;
     font-weight: 555;
     font-size: 70px;
@@ -42,6 +44,7 @@ a:hover {
     font-weight: 400;
     font-family: sans-serif;
     color: white;
+    /* color:black; Messing around with no colors */
     font-size: 10px;
     /* justify-self: flex-end; */
     flex: 0 0 10%;
