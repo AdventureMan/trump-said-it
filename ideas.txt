@@ -1,0 +1,12 @@
+- random trump quote loads every time the page is visited
+- single page
+- block fonts
+- fun full screen background colors
+- pull from dictionary of quotes
+- include sources
+- date he said it
+- date quote was submitted
+- user submitted
+- user voted
+- common format
+- input / submission form
