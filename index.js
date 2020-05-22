@@ -1,52 +1,51 @@
-const binderFullOfQuotes = [
-    {
-        source: {
-            display: "CNN",
-            link: "www.google.com"
-        },
-        quote: "Why are we having all these people from shithole countries come here"
-    },
-    {
-        source: {
-            display: "POLITICO",
-            link: "www.google.com"
-        },
-        quote: "I am the least racist person you hav ever interviewed"
-    }
-];
-
 window.onload = () => {
     setPage();
 }
 
-function fetchQuote(func) {
-    const index = getRandomInt(0, binderFullOfQuotes.length); //random number between 0..array.length
-    return func(binderFullOfQuotes[index]);
+// Get that delicious data from the API
+async function fetchQuote(successFunc, errFunc) {
+    try {
+        const response = await fetch('http://localhost:3000/api/v1/quotes');
+        const data = await response.json();
+        if (!validateResponse(data)) {
+            errFunc('Malformed API response', data);
+            return;
+        }
+        successFunc(data);
+    } catch (e) {
+        errFunc(e);
+    }
 }
 
-/*
-function fetchQuote() {
-    const index = getRandomInt(0, binderFullOfQuotes.length); //random number between 0..array.length
-    // return object from array at random index
+// Check that the response exists, and has all required data to create the page
+function validateResponse(quoteObj) {
+    if (!quoteObj || !quoteObj.quote) { return false; }
+    if (!quoteObj.source || !quoteObj.source.link || !quoteObj.source.display) { return false; }
 
-    return binderFullOfQuotes[index];
+    if (quoteObj.quote.trim().length === 0) { return false; }
+    if (quoteObj.source.link.trim().length === 0) { return false; }
+    if (quoteObj.source.display.trim().length === 0) { return false; }
+
+
+    return true;
 }
-*/
 
+// Get DOM references, start fetching data
 function setPage() {
     const quoteElement = document.getElementById('quote');
     const sourceElement = document.getElementById('source');
-    // const quoteObj = fetchQuote();
-    fetchQuote((quoteObj) => {
-        setSourceClickListener(sourceElement, quoteObj);
 
-        quoteElement.innerText = quoteObj.quote;
-        sourceElement.innerText = quoteObj.source.display;
-        sourceElement.setAttribute('href', quoteObj.source.link)
-    
-    });
+    fetchQuote((quoteObj) => {
+        const quote = new Quote(quoteObj.quote, quoteObj.source);
+
+        quoteElement.innerText = quote.quote;
+        sourceElement.innerText = quote.source.display;
+        sourceElement.setAttribute('href', quote.source.link)
+
+    }, err => console.error(err));
 }
 
+// Create an event listener for href clicks
 function setSourceClickListener(sourceElement, quoteObj) {
     if (!sourceElement) { console.error("Something went wrong", source); return; }
     sourceElement.addEventListener('click', (event) => {
@@ -55,8 +54,20 @@ function setSourceClickListener(sourceElement, quoteObj) {
     });
 }
 
+// From MDN
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+// Just for fun
+class Quote {
+    constructor(quote, source) {
+        this.quote = quote;
+        this.source = {
+            link: source.link,
+            display: source.display
+        }
+    }
 }
